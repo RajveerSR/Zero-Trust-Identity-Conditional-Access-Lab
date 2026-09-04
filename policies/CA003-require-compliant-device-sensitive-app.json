@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "metadata": {
+    "id": "CA003",
+    "purpose": "Reduce data-loss and endpoint-compromise risk by allowing the sensitive lab application only from a device that reports compliant state.",
+    "scope": "Shared lab users and lab administrators accessing the single SENSITIVE_APP_ID resource from Windows, across all client app types.",
+    "exclusions": "The shared emergency-access group and a named, time-bounded device exception group.",
+    "controls": "Require the device to be marked compliant. CA001 or CA002 independently supplies the applicable authentication requirement.",
+    "prerequisites": [
+      "Microsoft Entra ID P1 or qualifying suite licences for in-scope users",
+      "Microsoft Intune licences and an assigned compliance policy",
+      "Test device is registered in Microsoft Entra ID, enrolled in Intune, and has reported compliance",
+      "Supported operating system and browser/client capable of presenting device identity",
+      "Sensitive enterprise application ID is verified in the target tenant"
+    ],
+    "expectedUserImpact": "For the sensitive app on Windows, a recognized compliant device satisfies this policy; an unmanaged, unknown, or noncompliant device would fail the grant control when enforced. The Windows-only pilot avoids known report-only device-certificate prompts on macOS, iOS, and Android. Until Intune prerequisites and tenant evidence exist, this scenario remains designed but unverified.",
+    "owner": "Zero Trust Identity & Conditional Access Lab",
+    "verificationStatus": "designed-unverified-device-prerequisites"
+  },
+  "graph": {
+    "displayName": "ZT-LAB-CA003-Require-Compliant-Device-Sensitive-App",
+    "state": "enabledForReportingButNotEnforced",
+    "conditions": {
+      "users": {
+        "includeGroups": [
+          "${LAB_USERS_GROUP_ID}",
+          "${LAB_ADMINS_GROUP_ID}"
+        ],
+        "excludeGroups": [
+          "${EMERGENCY_ACCESS_GROUP_ID}",
+          "${CA_DEVICE_EXCEPTION_GROUP_ID}"
+        ]
+      },
+      "applications": {
+        "includeApplications": ["${SENSITIVE_APP_ID}"]
+      },
+      "platforms": {
+        "includePlatforms": ["windows"]
+      },
+      "clientAppTypes": ["all"]
+    },
+    "grantControls": {
+      "operator": "OR",
+      "builtInControls": ["compliantDevice"]
+    }
+  }
+}

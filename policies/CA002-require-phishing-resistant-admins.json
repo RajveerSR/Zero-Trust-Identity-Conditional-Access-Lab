@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "metadata": {
+    "id": "CA002",
+    "purpose": "Protect privileged lab activity from credential phishing, adversary-in-the-middle interception, and MFA fatigue by requiring a phishing-resistant authentication method.",
+    "scope": "The shared LAB_ADMINS_GROUP_ID group, for all cloud apps and all client app types. This pilot group is used instead of tenant-wide directory roles to bound lockout risk.",
+    "exclusions": "The shared emergency-access group only; routine admin exceptions are intentionally not defined.",
+    "controls": "Require the tenant-verified built-in Phishing-resistant MFA authentication strength.",
+    "prerequisites": [
+      "Microsoft Entra ID P1 or qualifying suite licences for in-scope administrators",
+      "At least two usable phishing-resistant methods are registered per pilot admin where feasible",
+      "Passkey (FIDO2), Windows Hello for Business, or certificate-based authentication is enabled and tested",
+      "Emergency-access accounts exist, are independently secured, monitored, and tested",
+      "The authentication-strength object ID is verified in the target tenant"
+    ],
+    "expectedUserImpact": "An administrator whose current authentication does not satisfy the selected strength must use an allowed phishing-resistant method. SMS, voice, TOTP, and push alone do not satisfy this policy. Report-only mode does not enforce the requirement.",
+    "owner": "Zero Trust Identity & Conditional Access Lab",
+    "verificationStatus": "designed-unverified"
+  },
+  "graph": {
+    "displayName": "ZT-LAB-CA002-Require-Phishing-Resistant-MFA-Admins",
+    "state": "enabledForReportingButNotEnforced",
+    "conditions": {
+      "users": {
+        "includeGroups": ["${LAB_ADMINS_GROUP_ID}"],
+        "excludeGroups": ["${EMERGENCY_ACCESS_GROUP_ID}"]
+      },
+      "applications": {
+        "includeApplications": ["All"]
+      },
+      "clientAppTypes": ["all"]
+    },
+    "grantControls": {
+      "operator": "OR",
+      "authenticationStrength": {
+        "id": "${PHISHING_RESISTANT_AUTH_STRENGTH_ID}"
+      }
+    }
+  }
+}

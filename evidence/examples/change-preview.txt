@@ -1,0 +1,8 @@
+SYNTHETIC FIXTURE-BASED EXAMPLE — NO TENANT QUERY OR MUTATION
+
+Expected actions against tests/fixtures/current-policies.json:
+UPDATE    CA001   ZT-LAB-CA001-Require-MFA-Pilot
+UNCHANGED CA002   ZT-LAB-CA002-Require-Phishing-Resistant-MFA-Admins
+CREATE    CA003   ZT-LAB-CA003-Require-Compliant-Device-Sensitive-App
+
+The CA001 diff adds the dedicated MFA exception-group exclusion. Run the preview command to see the full unified diff.

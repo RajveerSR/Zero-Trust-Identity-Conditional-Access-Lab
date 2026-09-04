@@ -1,0 +1,10 @@
+config/lab-identities.json
+config/tenant.json
+evidence/tenant/**
+!evidence/tenant/.gitkeep
+*.pyc
+__pycache__/
+.pytest_cache/
+.venv/
+bin/
+obj/

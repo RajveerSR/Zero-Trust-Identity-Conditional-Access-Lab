@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "metadata": {
+    "id": "CA001",
+    "purpose": "Reduce account-takeover risk by requiring multifactor authentication for interactive access by ordinary lab users and lab administrators.",
+    "scope": "The shared LAB_USERS_GROUP_ID and LAB_ADMINS_GROUP_ID groups, for all cloud apps and all client app types.",
+    "exclusions": "The shared emergency-access group and the named, time-bounded MFA exception group.",
+    "controls": "Require Microsoft Entra multifactor authentication.",
+    "prerequisites": [
+      "Microsoft Entra ID P1 or qualifying suite licences for in-scope users",
+      "Pilot users have registered usable MFA methods",
+      "Emergency-access accounts exist, are independently secured, monitored, and tested",
+      "Group object IDs have been reconciled with the Enterprise Identity Governance Lab"
+    ],
+    "expectedUserImpact": "Users without an MFA claim are prompted to complete MFA; existing valid MFA claims can satisfy the control. Report-only mode records the predicted result and does not prompt or block.",
+    "owner": "Zero Trust Identity & Conditional Access Lab",
+    "verificationStatus": "designed-unverified"
+  },
+  "graph": {
+    "displayName": "ZT-LAB-CA001-Require-MFA-Pilot",
+    "state": "enabledForReportingButNotEnforced",
+    "conditions": {
+      "users": {
+        "includeGroups": [
+          "${LAB_USERS_GROUP_ID}",
+          "${LAB_ADMINS_GROUP_ID}"
+        ],
+        "excludeGroups": [
+          "${EMERGENCY_ACCESS_GROUP_ID}",
+          "${CA_MFA_EXCEPTION_GROUP_ID}"
+        ]
+      },
+      "applications": {
+        "includeApplications": ["All"]
+      },
+      "clientAppTypes": ["all"]
+    },
+    "grantControls": {
+      "operator": "OR",
+      "builtInControls": ["mfa"]
+    }
+  }
+}
