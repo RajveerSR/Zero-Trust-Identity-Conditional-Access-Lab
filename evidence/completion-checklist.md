@@ -37,7 +37,7 @@
 
 - [ ] Subscription/resource group, cost/budget, host, and network path approved.
 - [ ] Azure deployment What If reviewed and saved.
-- [ ] Identity attached to selected host; container-scoped role assignment exported.
+- [ ] Identity attached to selected host; host selection and direct plus inherited role assignments exported.
 - [ ] E09 probe proves `allowed` success and `denied` authorization failure with the same identity.
 - [ ] Cleanup completed and evidenced after demonstration.
 

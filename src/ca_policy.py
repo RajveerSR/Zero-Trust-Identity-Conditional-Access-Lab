@@ -114,9 +114,8 @@ def _is_uuid(value: Any) -> bool:
     if not isinstance(value, str):
         return False
     try:
-        uuid.UUID(value)
-        return True
-    except ValueError:
+        return str(uuid.UUID(value)) == value.lower()
+    except (ValueError, AttributeError):
         return False
 
 
@@ -295,4 +294,12 @@ def current_policy_map(document: Any) -> dict[str, dict[str, Any]]:
     items = document.get("value", []) if isinstance(document, dict) else document
     if not isinstance(items, list):
         raise ValueError("Current-policy export must be a Graph collection or JSON array")
-    return {item["displayName"]: item for item in items if isinstance(item, dict) and item.get("displayName")}
+    result: dict[str, dict[str, Any]] = {}
+    for item in items:
+        if not isinstance(item, dict) or not item.get("displayName"):
+            continue
+        display_name = item["displayName"]
+        if display_name in result:
+            raise ValueError(f"Ambiguous current state: more than one policy is named {display_name}")
+        result[display_name] = item
+    return result

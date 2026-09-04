@@ -40,6 +40,8 @@ Inspect every `CREATE`/`UPDATE`, all existing policies with overlapping scope, a
 
 The command below is mutating and intentionally requires an explicit flag. It cannot deploy an `enabled` repository definition and refuses example manifests.
 
+Microsoft Graph does not make a multi-policy run atomic. If a later request fails after an earlier create/update succeeds, the script reports completed and last-attempted work and stops. Do not assume rollback: take a fresh export and preview before any recovery or retry.
+
 ```powershell
 python scripts/deploy_report_only.py `
   --config config/lab-identities.json `

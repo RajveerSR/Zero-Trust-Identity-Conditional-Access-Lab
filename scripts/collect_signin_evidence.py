@@ -82,7 +82,7 @@ def _minimal_event(event: dict, personas: dict[str, str], prefix: str) -> dict:
     }
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Collect data-minimised sign-in evidence for lab policies.")
     parser.add_argument("--since", required=True, help="ISO-8601 timestamp with timezone")
     parser.add_argument("--until", help="ISO-8601 timestamp with timezone; defaults to now")
@@ -90,7 +90,7 @@ def main() -> int:
     parser.add_argument("--tenant-config", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--policy-prefix", default="ZT-LAB-")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     try:
         since = _parse_timestamp(args.since)
         until = _parse_timestamp(args.until) if args.until else datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
@@ -130,8 +130,12 @@ def main() -> int:
         },
         "events": relevant,
     }
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    try:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    except OSError as error:
+        print(f"Unable to write sign-in evidence: {error}", file=sys.stderr)
+        return 1
     print(f"Collected {len(relevant)} relevant event(s) from {len(events)} sign-in record(s) into {args.output}")
     return 0
 

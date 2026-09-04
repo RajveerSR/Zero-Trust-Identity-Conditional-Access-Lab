@@ -13,11 +13,11 @@ sys.path.insert(0, str(ROOT))
 from src.graph_cli import GRAPH_ROOT, GraphCliError, assert_graph_tenant, graph_get_all
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Export current Conditional Access policies (read-only).")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--expected-tenant-id", required=True)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     try:
         tenant_id = assert_graph_tenant(args.expected_tenant_id)
         policies = graph_get_all(f"{GRAPH_ROOT}/identity/conditionalAccess/policies")
@@ -34,8 +34,12 @@ def main() -> int:
         },
         "value": policies,
     }
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    try:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    except OSError as error:
+        print(f"Unable to write policy export: {error}", file=sys.stderr)
+        return 1
     print(f"Exported {len(policies)} policies to {args.output}")
     return 0
 

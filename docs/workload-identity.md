@@ -46,10 +46,12 @@ Run this **on the Azure host with the identity attached**, using deployment outp
 Expected evidence:
 
 - `allowed`: exit code 0 and `allowed: true`.
-- `denied`: nonzero exit code and `allowed: false` with an authorization diagnostic.
+- `denied`: nonzero exit code, `allowed: false`, and `failureCategory: authorization`.
 - overall `passed: true` only when both positive and negative expectations hold.
 
-The probe never records an access token or storage key. A network/DNS failure is not acceptable denied-access evidence; confirm the diagnostic is authorization-related.
+The probe never records an access token or storage key. It classifies missing-resource, authentication, network, authorization, and unknown failures; only authorization is accepted as the negative RBAC result. A DNS timeout, failed managed-identity login, missing container, or unknown CLI error therefore fails the overall probe instead of becoming false least-privilege evidence.
+
+Before accepting real evidence, also record the selected Azure host and export inherited role assignments at resource-group, storage-account, and container scopes. An inherited broad data role can invalidate the expected denial even when the template's direct assignment is narrow.
 
 ## Cleanup
 

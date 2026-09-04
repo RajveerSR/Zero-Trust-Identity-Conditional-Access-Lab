@@ -126,6 +126,43 @@ class PolicyTests(unittest.TestCase):
             ),
         )
 
+    def test_realistic_authentication_strength_metadata_is_ignored(self) -> None:
+        current = current_policy_map(
+            read_json(ROOT / "tests" / "fixtures" / "current-policies-realistic.json")
+        )
+        desired = next(
+            graph_payload(document)
+            for _, document in self.resolved
+            if document["metadata"]["id"] == "CA002"
+        )
+        self.assertEqual("UNCHANGED", classify_change(desired, current))
+
+        changed_strength = copy.deepcopy(current)
+        changed_strength[desired["displayName"]]["grantControls"]["authenticationStrength"]["id"] = (
+            "00000000-0000-0000-0000-000000000003"
+        )
+        self.assertEqual("UPDATE", classify_change(desired, changed_strength))
+
+        changed_control = copy.deepcopy(current)
+        changed_control[desired["displayName"]]["grantControls"]["builtInControls"] = ["compliantDevice"]
+        self.assertEqual("UPDATE", classify_change(desired, changed_control))
+
+    def test_duplicate_current_policy_names_are_rejected(self) -> None:
+        duplicate_name = "ZT-LAB-CA001-Require-MFA-Pilot"
+        with self.assertRaisesRegex(ValueError, "Ambiguous current state"):
+            current_policy_map(
+                [
+                    {"id": "one", "displayName": duplicate_name},
+                    {"id": "two", "displayName": duplicate_name},
+                ]
+            )
+
+    def test_noncanonical_uuid_is_rejected(self) -> None:
+        changed = copy.deepcopy(self.resolved[0][1])
+        changed["graph"]["conditions"]["users"]["includeGroups"][0] = "11111111111141118111111111111111"
+        messages = [issue.message for issue in validate_policy(changed) if issue.severity == "ERROR"]
+        self.assertTrue(any(message.startswith("invalid group object ID") for message in messages))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -23,17 +23,17 @@ from src.ca_policy import (
 )
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Preview Conditional Access creates and updates without mutation.")
     parser.add_argument("--policy-dir", type=Path, default=ROOT / "policies")
     parser.add_argument("--config", type=Path, action="append", default=[])
     parser.add_argument("--use-example-config", action="store_true")
     parser.add_argument("--current", type=Path, help="Graph policy export; omission treats the tenant as empty")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
-def main() -> int:
-    args = parse_args()
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
     config_paths = list(args.config)
     if args.use_example_config:
         config_paths.extend(
@@ -42,27 +42,32 @@ def main() -> int:
     if not config_paths:
         raise SystemExit("Provide --config at least twice (identity and tenant manifests), or use --use-example-config")
 
-    config, warnings = load_config(config_paths)
-    for warning in warnings:
-        print(f"WARNING: {warning}")
-    raw_documents = load_policy_documents(args.policy_dir)
-    resolved_documents = []
-    missing_any: set[str] = set()
-    for path, document in raw_documents:
-        resolved, missing = resolve_policy(document, config)
-        resolved_documents.append((path, resolved))
-        missing_any.update(missing)
-    if missing_any:
-        raise SystemExit(f"Unresolved configuration keys: {', '.join(sorted(missing_any))}")
-    errors = [
-        item
-        for item in validate_collection(resolved_documents, config.get("EMERGENCY_ACCESS_GROUP_ID"))
-        if item.severity == "ERROR"
-    ]
-    if errors:
-        raise SystemExit("\n".join(str(item) for item in errors))
-
-    current = current_policy_map(read_json(args.current)) if args.current else {}
+    try:
+        config, warnings = load_config(config_paths)
+        for warning in warnings:
+            print(f"WARNING: {warning}")
+        raw_documents = load_policy_documents(args.policy_dir)
+        resolved_documents = []
+        missing_any: set[str] = set()
+        for path, document in raw_documents:
+            resolved, missing = resolve_policy(document, config)
+            resolved_documents.append((path, resolved))
+            missing_any.update(missing)
+        if missing_any:
+            print(f"Unresolved configuration keys: {', '.join(sorted(missing_any))}", file=sys.stderr)
+            return 2
+        errors = [
+            item
+            for item in validate_collection(resolved_documents, config.get("EMERGENCY_ACCESS_GROUP_ID"))
+            if item.severity == "ERROR"
+        ]
+        if errors:
+            print("\n".join(str(item) for item in errors), file=sys.stderr)
+            return 2
+        current = current_policy_map(read_json(args.current)) if args.current else {}
+    except (OSError, ValueError) as error:
+        print(f"Unable to prepare change preview: {error}", file=sys.stderr)
+        return 1
     print("\nConditional Access change preview (read-only)\n")
     print(f"{'ACTION':<10} {'POLICY':<7} DISPLAY NAME")
     print(f"{'-' * 10} {'-' * 7} {'-' * 52}")

@@ -11,6 +11,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+Import-Module (Join-Path $PSScriptRoot '..\src\WorkloadProbe.psm1') -Force
 
 if (-not (Get-Command az -ErrorAction SilentlyContinue)) {
     throw 'Azure CLI (az) is required.'
@@ -31,11 +32,13 @@ function Invoke-ContainerProbe {
         --only-show-errors `
         --output json 2>&1
     $exitCode = $LASTEXITCODE
+    $diagnostic = if ($exitCode -eq 0) { 'Blob list authorized.' } else { ($output | Out-String).Trim() }
     [ordered]@{
         container = $ContainerName
         exitCode = $exitCode
         allowed = ($exitCode -eq 0)
-        diagnostic = if ($exitCode -eq 0) { 'Blob list authorized.' } else { ($output | Out-String).Trim() }
+        failureCategory = if ($exitCode -eq 0) { $null } else { Get-WorkloadProbeFailureCategory -Diagnostic $diagnostic }
+        diagnostic = $diagnostic
     }
 }
 
@@ -51,7 +54,7 @@ $result = [ordered]@{
         note = 'No token, account key, or credential is written.'
     }
     probes = @($allowed, $denied)
-    passed = ($allowed.allowed -and -not $denied.allowed)
+    passed = ($allowed.allowed -and -not $denied.allowed -and $denied.failureCategory -eq 'authorization')
 }
 
 $parent = Split-Path -Parent $EvidencePath
@@ -61,7 +64,7 @@ if ($parent) {
 $result | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $EvidencePath -Encoding utf8
 
 if (-not $result.passed) {
-    Write-Error "Probe did not match the expected allow/deny result. Evidence: $EvidencePath"
+    Write-Error "Probe did not prove container-scoped RBAC. The allowed probe must succeed and the denied probe must be an authorization failure. Evidence: $EvidencePath"
     exit 1
 }
 

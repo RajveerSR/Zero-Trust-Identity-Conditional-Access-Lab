@@ -1,0 +1,56 @@
+{
+  "evidenceMetadata": {
+    "type": "synthetic-realistic-graph-fixture",
+    "claim": "Models server-added fields; not a tenant export"
+  },
+  "value": [
+    {
+      "id": "20202020-2020-4020-8020-202020202020",
+      "createdDateTime": "2026-09-04T09:00:00Z",
+      "modifiedDateTime": "2026-09-04T09:05:00Z",
+      "displayName": "ZT-LAB-CA002-Require-Phishing-Resistant-MFA-Admins",
+      "state": "enabledForReportingButNotEnforced",
+      "templateId": null,
+      "conditions": {
+        "users": {
+          "includeUsers": [],
+          "excludeUsers": [],
+          "includeGroups": ["22222222-2222-4222-8222-222222222222"],
+          "excludeGroups": ["33333333-3333-4333-8333-333333333333"],
+          "includeRoles": [],
+          "excludeRoles": []
+        },
+        "applications": {
+          "includeApplications": ["All"],
+          "excludeApplications": [],
+          "includeUserActions": []
+        },
+        "platforms": null,
+        "locations": null,
+        "devices": null,
+        "clientAppTypes": ["all"]
+      },
+      "grantControls": {
+        "operator": "OR",
+        "builtInControls": [],
+        "authenticationStrength": {
+          "id": "00000000-0000-0000-0000-000000000004",
+          "createdDateTime": "2021-12-01T08:00:00Z",
+          "modifiedDateTime": "2021-12-01T08:00:00Z",
+          "displayName": "Phishing-resistant MFA",
+          "description": "Phishing-resistant, Passwordless methods for the strongest authentication",
+          "policyType": "builtIn",
+          "requirementsSatisfied": "mfa",
+          "allowedCombinations": [
+            "fido2",
+            "windowsHelloForBusiness",
+            "x509CertificateMultiFactor"
+          ]
+        },
+        "termsOfUse": [],
+        "customAuthenticationFactors": []
+      },
+      "sessionControls": null
+    }
+  ]
+}
