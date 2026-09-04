@@ -19,6 +19,7 @@ from src.ca_policy import (
     normalize_graph_policy,
     read_json,
     resolve_policy,
+    select_policy_documents,
     validate_collection,
 )
 
@@ -26,6 +27,7 @@ from src.ca_policy import (
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Preview Conditional Access creates and updates without mutation.")
     parser.add_argument("--policy-dir", type=Path, default=ROOT / "policies")
+    parser.add_argument("--policy-id", action="append", choices=("CA001", "CA002", "CA003"), help="Process only the selected reviewed policy; repeat for more than one")
     parser.add_argument("--config", type=Path, action="append", default=[])
     parser.add_argument("--use-example-config", action="store_true")
     parser.add_argument("--current", type=Path, help="Graph policy export; omission treats the tenant as empty")
@@ -46,7 +48,7 @@ def main(argv: list[str] | None = None) -> int:
         config, warnings = load_config(config_paths)
         for warning in warnings:
             print(f"WARNING: {warning}")
-        raw_documents = load_policy_documents(args.policy_dir)
+        raw_documents = select_policy_documents(load_policy_documents(args.policy_dir), args.policy_id)
         resolved_documents = []
         missing_any: set[str] = set()
         for path, document in raw_documents:
@@ -58,7 +60,7 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         errors = [
             item
-            for item in validate_collection(resolved_documents, config.get("EMERGENCY_ACCESS_GROUP_ID"))
+            for item in validate_collection(resolved_documents, config.get("EMERGENCY_ACCESS_GROUP_ID"), set(args.policy_id) if args.policy_id else None)
             if item.severity == "ERROR"
         ]
         if errors:

@@ -215,6 +215,7 @@ def validate_policy(
 def validate_collection(
     documents: list[tuple[Path, dict[str, Any]]],
     expected_emergency_group: str | None = None,
+    expected_policy_ids: set[str] | None = None,
 ) -> list[PolicyIssue]:
     issues: list[PolicyIssue] = []
     ids: set[str] = set()
@@ -231,10 +232,27 @@ def validate_collection(
             issues.append(PolicyIssue("ERROR", str(path), f"duplicate displayName {display_name}"))
         ids.add(policy_id)
         names.add(display_name)
-    expected = {"CA001", "CA002", "CA003"}
-    if ids != expected:
+    expected = expected_policy_ids if expected_policy_ids is not None else {"CA001", "CA002", "CA003"}
+    if not expected:
+        issues.append(PolicyIssue("ERROR", "collection", "at least one expected policy ID is required"))
+    elif ids != expected:
         issues.append(PolicyIssue("ERROR", "collection", f"expected policy IDs {sorted(expected)}, got {sorted(ids)}"))
     return issues
+
+
+def select_policy_documents(
+    documents: list[tuple[Path, dict[str, Any]]], policy_ids: list[str] | None
+) -> list[tuple[Path, dict[str, Any]]]:
+    if not policy_ids:
+        return documents
+    if len(policy_ids) != len(set(policy_ids)):
+        raise ValueError("Policy IDs may be selected only once")
+    requested = set(policy_ids)
+    available = {document.get("metadata", {}).get("id") for _, document in documents}
+    unknown = requested - available
+    if unknown:
+        raise ValueError(f"Unknown policy IDs: {', '.join(sorted(unknown))}")
+    return [(path, document) for path, document in documents if document.get("metadata", {}).get("id") in requested]
 
 
 def graph_payload(document: dict[str, Any]) -> dict[str, Any]:

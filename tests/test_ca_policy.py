@@ -16,6 +16,7 @@ from src.ca_policy import (
     normalize_graph_policy,
     read_json,
     resolve_policy,
+    select_policy_documents,
     validate_collection,
     validate_policy,
 )
@@ -41,6 +42,15 @@ class PolicyTests(unittest.TestCase):
     def test_complete_policy_set_is_valid(self) -> None:
         errors = [issue for issue in validate_collection(self.raw) if issue.severity == "ERROR"]
         self.assertEqual([], errors)
+
+    def test_selected_policy_set_has_explicit_validation_boundary(self) -> None:
+        selected = select_policy_documents(self.raw, ["CA001", "CA002"])
+        errors = [issue for issue in validate_collection(selected, expected_policy_ids={"CA001", "CA002"}) if issue.severity == "ERROR"]
+        self.assertEqual([], errors)
+        wrong_boundary = [issue.message for issue in validate_collection(selected) if issue.severity == "ERROR"]
+        self.assertTrue(any("expected policy IDs" in message for message in wrong_boundary))
+        with self.assertRaisesRegex(ValueError, "selected only once"):
+            select_policy_documents(self.raw, ["CA001", "CA001"])
 
     def test_resolved_policy_set_is_valid(self) -> None:
         errors = [

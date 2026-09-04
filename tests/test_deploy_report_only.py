@@ -208,6 +208,17 @@ class DeployReportOnlyTests(unittest.TestCase):
     @patch("scripts.deploy_report_only.graph_request")
     @patch("scripts.deploy_report_only.graph_get_all", return_value=[])
     @patch("scripts.deploy_report_only.assert_graph_tenant")
+    def test_policy_selection_creates_only_requested_policy(self, tenant, _get_all, request) -> None:
+        request.return_value = {"id": "aaaaaaaa-1111-4111-8111-111111111111"}
+        with redirect_stdout(io.StringIO()):
+            result = deploy_report_only.main(self.args + ["--policy-id", "CA001"])
+        self.assertEqual(0, result)
+        tenant.assert_called_once_with(TENANT_ID)
+        request.assert_called_once_with("POST", f"{GRAPH_ROOT}/identity/conditionalAccess/policies", self.desired["CA001"])
+
+    @patch("scripts.deploy_report_only.graph_request")
+    @patch("scripts.deploy_report_only.graph_get_all", return_value=[])
+    @patch("scripts.deploy_report_only.assert_graph_tenant")
     def test_partial_deployment_reports_completed_and_stops(self, _tenant, _get_all, request) -> None:
         request.side_effect = [
             {"id": "aaaaaaaa-1111-4111-8111-111111111111"},

@@ -19,6 +19,7 @@ from src.ca_policy import (
     load_policy_documents,
     normalize_graph_policy,
     resolve_policy,
+    select_policy_documents,
     validate_collection,
 )
 from src.graph_cli import GRAPH_ROOT, GraphCliError, assert_graph_tenant, graph_get_all, graph_request
@@ -28,6 +29,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Create or update only report-only Conditional Access policies.")
     parser.add_argument("--config", type=Path, action="append", required=True)
     parser.add_argument("--policy-dir", type=Path, default=ROOT / "policies")
+    parser.add_argument("--policy-id", action="append", choices=("CA001", "CA002", "CA003"), help="Process only the selected reviewed policy; repeat for more than one")
     parser.add_argument("--apply-report-only", action="store_true", help="Required mutation guard")
     args = parser.parse_args(argv)
     if not args.apply_report_only:
@@ -46,7 +48,8 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Refusing known example identifiers in keys: {', '.join(examples)}", file=sys.stderr)
             return 2
         resolved_documents = []
-        for path, document in load_policy_documents(args.policy_dir):
+        documents = select_policy_documents(load_policy_documents(args.policy_dir), args.policy_id)
+        for path, document in documents:
             resolved, missing = resolve_policy(document, config)
             if missing:
                 print(f"{path}: unresolved keys: {', '.join(sorted(missing))}", file=sys.stderr)
@@ -54,7 +57,7 @@ def main(argv: list[str] | None = None) -> int:
             resolved_documents.append((path, resolved))
         errors = [
             issue
-            for issue in validate_collection(resolved_documents, config.get("EMERGENCY_ACCESS_GROUP_ID"))
+            for issue in validate_collection(resolved_documents, config.get("EMERGENCY_ACCESS_GROUP_ID"), set(args.policy_id) if args.policy_id else None)
             if issue.severity == "ERROR"
         ]
         if errors:
