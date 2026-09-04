@@ -1,9 +1,10 @@
 # Evidence index
 
-No checked-in file currently proves a tenant deployment or enforced sign-in. `examples/` contains synthetic formatting examples only. Real tenant artifacts belong under ignored `evidence/tenant/` and should be reviewed for personal/sensitive data before sharing.
+No checked-in file currently proves a tenant deployment or enforced sign-in. `examples/` contains synthetic formatting examples only; `local/` records actual offline regression results. Real tenant artifacts belong under ignored `evidence/tenant/` and should be reviewed for personal/sensitive data before sharing.
 
 | Evidence ID | Capability | Required level | Expected path | Current state |
 |---|---|---|---|---|
+| E00 | Local engineering regression | Local observed | `evidence/local/verification-2026-09-04.md` | Collected; 51 Python and 7 PowerShell classification cases passed |
 | E01 | Policy source validation | Local | `evidence/examples/local-validation.txt` | Synthetic example; regenerate locally |
 | E02 | Change intent | Preview | `evidence/examples/change-preview.txt` | Synthetic fixture-based example; regenerate locally |
 | E03 | Tenant policy configuration | Tenant export | `evidence/tenant/prechange-policies.json`, `postchange-policies.json` | Not collected |
@@ -21,6 +22,6 @@ No checked-in file currently proves a tenant deployment or enforced sign-in. `ex
 - Record UTC timestamps, commit SHA, tenant display name/ID (non-secret), policy Graph IDs, test case, and collector/version.
 - Correlate sign-in ID, resource, device state, and applicable policy result. A screenshot without inputs/context is weak evidence.
 - Minimise UPNs, names, IP addresses, locations, tokens, and device identifiers. Never record credentials or access tokens.
-- Capture both allowed and denied cases. A denial caused by networking, bad syntax, or missing app assignment is not proof of the intended control.
+- Capture both allowed and denied cases. A denial caused by networking, authentication failure, bad syntax, a missing resource, or missing app assignment is not proof of the intended control.
 - Preserve the unedited source artifact privately; use a redacted copy for interview/public presentation and record what was redacted.
 - A report-only failure is a prediction. Only an enabled policy plus the actual sign-in outcome supports an enforcement claim.

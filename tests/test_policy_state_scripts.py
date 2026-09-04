@@ -137,6 +137,15 @@ class PolicyStateScriptTests(unittest.TestCase):
 
     @patch("scripts.disable_policy.graph_request")
     @patch("scripts.disable_policy.assert_graph_tenant")
+    def test_disable_wrong_confirmation_performs_no_graph_operation(self, tenant, request) -> None:
+        with redirect_stderr(io.StringIO()):
+            result = disable_policy.main(disable_args(self.record, "DISABLE:WRONG"))
+        self.assertEqual(1, result)
+        tenant.assert_not_called()
+        request.assert_not_called()
+
+    @patch("scripts.disable_policy.graph_request")
+    @patch("scripts.disable_policy.assert_graph_tenant")
     def test_disable_patches_only_exact_owned_policy(self, tenant, request) -> None:
         request.side_effect = [
             {"id": POLICY_ID, "displayName": POLICY_NAME, "state": "enabled"},

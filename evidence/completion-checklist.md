@@ -8,11 +8,17 @@
 - [x] Local validation and deterministic tests implemented — `scripts/validate_policies.py`, `tests/test_ca_policy.py`.
 - [x] Readable create/update/no-change preview implemented — `scripts/preview_changes.py`.
 - [x] Report-only deployment guarded from example config and enabled state — `scripts/deploy_report_only.py`.
-- [x] Enforcement is a separate single-policy action — `scripts/enable_policy.py`.
+- [x] Report-only deployment guard branches, exact endpoints/payloads, partial failure, and no-write refusals have offline regression coverage.
+- [x] Enforcement is a separate single-policy action bound to exact tenant/key/ID/name ownership — `scripts/enable_policy.py`.
+- [x] Recovery uses the same exact ownership binding and remains independently invocable — `scripts/disable_policy.py`.
+- [x] Windows `az.cmd` resolution, process errors, safe payload transport, malformed JSON, and pagination have offline tests.
+- [x] Realistic server-added authentication-strength metadata and writable drift are tested separately.
 - [x] Emergency exclusion, monitoring, drill, and recovery model documented — `docs/recovery-runbook.md`.
 - [x] Shared identities consumed via an explicit non-secret manifest — `config/lab-identities.example.json`.
 - [x] Managed-identity least-privilege scenario and positive/negative probe prepared — `infra/`, `docs/workload-identity.md`.
+- [x] Negative workload diagnostics reject network, authentication, missing-resource, and unknown failures locally.
 - [x] Local evidence is explicitly labelled synthetic — `evidence/examples/`.
+- [x] Actual local regression evidence recorded separately from tenant evidence — `evidence/local/verification-2026-09-04.md`.
 
 ## Tenant-dependent Conditional Access
 
@@ -20,6 +26,7 @@
 - [ ] E03 prechange Conditional Access export captured and reviewed.
 - [ ] Report-only deployment completed with Graph response IDs recorded.
 - [ ] E03 postdeployment export proves all definitions remain report-only.
+- [ ] Tenant-bound `config/policy-identities.json` built from the reviewed postdeployment export.
 - [ ] E04 What If evidence captured for every available T01–T12 case.
 - [ ] E05 report-only sign-ins captured and reconciled to expectations.
 - [ ] Emergency-access monitoring alert and both-account drill evidenced (E08).
