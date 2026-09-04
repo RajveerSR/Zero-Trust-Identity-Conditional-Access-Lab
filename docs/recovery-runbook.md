@@ -12,17 +12,17 @@ Disable the newly enabled policy if expected users cannot access required resour
 
 ```powershell
 python scripts/disable_policy.py `
-  --policy-id <graph-policy-uuid> `
-  --expected-tenant-id <tenant-id> `
+  --policy-record config/policy-identities.json `
+  --policy-key CA001 `
   --incident-reference INC-EXAMPLE `
-  --confirm DISABLE:<graph-policy-uuid>
+  --confirm DISABLE:CA001:<graph-policy-uuid>
 ```
 
 4. Verify the policy reads `disabled`, then retry using a fresh/private session so stale tokens do not obscure the outcome.
 5. If more than one policy changed, disable only the newest/suspect policy first. Applicable policies accumulate, so another tenant policy may still deny access.
 6. Preserve pre/post policy exports, audit logs, sign-in IDs, and exact failure codes. Alert monitoring staff that emergency access was used and complete a post-incident review.
 
-If scripts are unavailable, use the Entra admin center from the emergency session. Do not make the emergency account dependent on the broken device, federation, PIM activation, or authentication path.
+The recovery script refuses to touch a policy unless the current Graph object exactly matches the tenant, policy key, ID, and display name in the locally built record. If the record or scripts are unavailable, use the Entra admin center from the emergency session and verify the exact policy name/ID against the last export. Do not make the emergency account dependent on the broken device, federation, PIM activation, or authentication path.
 
 ## Diagnosis sequence
 

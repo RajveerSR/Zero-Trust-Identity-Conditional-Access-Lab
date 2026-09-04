@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import argparse
 import sys
-import uuid
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -11,32 +10,34 @@ sys.path.insert(0, str(ROOT))
 
 from src.ca_policy import REPORT_ONLY_STATE
 from src.graph_cli import GRAPH_ROOT, GraphCliError, assert_graph_tenant, graph_request
+from src.policy_identity import PolicyIdentityError, load_policy_identity, validate_current_policy
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Explicitly enable one tested report-only policy.")
-    parser.add_argument("--policy-id", required=True, help="Microsoft Graph Conditional Access policy object ID")
+    parser.add_argument("--policy-record", type=Path, required=True, help="Tenant-bound lab policy identity record")
+    parser.add_argument("--policy-key", choices=("CA001", "CA002", "CA003"), required=True)
+    parser.add_argument("--policy-dir", type=Path, default=ROOT / "policies")
     parser.add_argument("--change-reference", required=True, help="Recorded approval/change reference")
-    parser.add_argument("--expected-tenant-id", required=True)
-    parser.add_argument("--confirm", required=True, help="Must equal ENABLE:<policy-id>")
-    args = parser.parse_args()
+    parser.add_argument("--confirm", required=True, help="Must equal ENABLE:<policy-key>:<policy-id>")
+    args = parser.parse_args(argv)
     try:
-        uuid.UUID(args.policy_id)
-    except ValueError:
-        print("--policy-id must be a UUID", file=sys.stderr)
-        return 2
-    if args.confirm != f"ENABLE:{args.policy_id}":
-        print("Confirmation mismatch; no change made.", file=sys.stderr)
-        return 2
-    try:
-        assert_graph_tenant(args.expected_tenant_id)
-        url = f"{GRAPH_ROOT}/identity/conditionalAccess/policies/{args.policy_id}"
+        identity = load_policy_identity(args.policy_record, args.policy_key, args.policy_dir)
+        if args.confirm != f"ENABLE:{identity.key}:{identity.policy_id}":
+            raise PolicyIdentityError("confirmation mismatch; no change made")
+        assert_graph_tenant(identity.tenant_id)
+        url = f"{GRAPH_ROOT}/identity/conditionalAccess/policies/{identity.policy_id}"
         current = graph_request("GET", url)
-        if current.get("state") != REPORT_ONLY_STATE:
-            raise RuntimeError(f"Policy state is {current.get('state')}, expected {REPORT_ONLY_STATE}")
+        current_state = validate_current_policy(current, identity)
+        if current_state != REPORT_ONLY_STATE:
+            raise PolicyIdentityError(f"policy state is {current_state}, expected {REPORT_ONLY_STATE}")
+        print(
+            f"TARGET tenant={identity.tenant_id} key={identity.key} id={identity.policy_id} "
+            f"displayName={identity.display_name} currentState={current_state}; action=ENABLE"
+        )
         graph_request("PATCH", url, {"state": "enabled"})
-        print(f"ENABLED {current.get('displayName')} ({args.policy_id}); change reference: {args.change_reference}")
-    except (GraphCliError, RuntimeError) as error:
+        print(f"ENABLED {identity.display_name} ({identity.policy_id}); change reference: {args.change_reference}")
+    except (GraphCliError, PolicyIdentityError) as error:
         print(error, file=sys.stderr)
         return 1
     return 0

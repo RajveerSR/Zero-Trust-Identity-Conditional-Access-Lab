@@ -1,6 +1,6 @@
 # Report-only rollout runbook
 
-This runbook prepares and evaluates changes. It does not authorize tenant modification. Use a recorded change window and keep an emergency-access operator outside the normal admin session.
+This runbook prepares and evaluates changes. It does not authorize tenant modification. Use a recorded change window and keep an emergency-access operator outside the normal admin session. Export and preview are read-only; creating report-only policies still changes tenant configuration even though those policies do not enforce controls.
 
 ## 1. Local validation
 
@@ -47,7 +47,19 @@ python scripts/deploy_report_only.py `
   --apply-report-only
 ```
 
-Immediately export again and verify all three objects are in `enabledForReportingButNotEnforced`. Record Graph IDs in the change/evidence record, not in policy templates.
+Immediately export again and verify all three objects are in `enabledForReportingButNotEnforced`. Then create the ignored, tenant-bound identity record used by the enable and recovery commands:
+
+```powershell
+python scripts/export_current_policies.py `
+  --expected-tenant-id <tenant-id> `
+  --output evidence/tenant/postdeployment-policies.json
+
+python scripts/build_policy_identity_record.py `
+  --policy-export evidence/tenant/postdeployment-policies.json `
+  --output config/policy-identities.json
+```
+
+The builder requires one exact exported match for each repository policy. Keep Graph IDs in this scoped record and the change/evidence record, not in deployable policy templates.
 
 ## 4. What If evaluation
 
@@ -83,14 +95,14 @@ Enable only one policy at a time and only after all its matrix cases pass review
 
 ## 7. Separate enable action
 
-Record approval and use the exact Graph policy UUID. Start with CA001's pilot cohort; observe; then CA002; CA003 last.
+Record approval and use the tenant-bound identity record. The command verifies tenant ID, repository policy key, Graph ID, and exact display name before PATCH. Start with CA001's pilot cohort; observe; then CA002; CA003 last.
 
 ```powershell
 python scripts/enable_policy.py `
-  --policy-id <graph-policy-uuid> `
-  --expected-tenant-id <tenant-id> `
+  --policy-record config/policy-identities.json `
+  --policy-key CA001 `
   --change-reference CHG-EXAMPLE `
-  --confirm ENABLE:<graph-policy-uuid>
+  --confirm ENABLE:CA001:<graph-policy-uuid>
 ```
 
 Immediately run the enforced cases, capture sign-in outcomes, and monitor help/lockout signals. Never label a report-only record as enforced evidence.

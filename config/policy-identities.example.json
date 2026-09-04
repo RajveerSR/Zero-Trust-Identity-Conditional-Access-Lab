@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "owner": "Zero Trust Identity & Conditional Access Lab",
+  "example": true,
+  "tenantId": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  "policies": {
+    "CA001": {
+      "id": "c001c001-c001-4001-8001-c001c001c001",
+      "displayName": "ZT-LAB-CA001-Require-MFA-Pilot"
+    },
+    "CA002": {
+      "id": "c002c002-c002-4002-8002-c002c002c002",
+      "displayName": "ZT-LAB-CA002-Require-Phishing-Resistant-MFA-Admins"
+    },
+    "CA003": {
+      "id": "c003c003-c003-4003-8003-c003c003c003",
+      "displayName": "ZT-LAB-CA003-Require-Compliant-Device-Sensitive-App"
+    }
+  }
+}

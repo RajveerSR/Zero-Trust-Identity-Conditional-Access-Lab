@@ -25,7 +25,7 @@ The Enterprise Identity Governance Lab is the system of record for ordinary user
 
 - Pilot ordinary users have at least one permitted MFA method registered.
 - Pilot administrators have a phishing-resistant method enabled and successfully tested before CA002 is enabled. Prefer two independently recoverable credentials where practical.
-- Query/inspect the tenant's authentication-strength policies and verify that `PHISHING_RESISTANT_AUTH_STRENGTH_ID` resolves to the intended built-in strength. The example currently uses `00000000-0000-0000-0000-000000000004`, but tenant verification is still a gate.
+- `PHISHING_RESISTANT_AUTH_STRENGTH_ID` is a Microsoft built-in constant, not a tenant-specific placeholder. The example uses `00000000-0000-0000-0000-000000000004`. Query/inspect the tenant's authentication-strength policies to verify that it resolves to the intended built-in strength and that its allowed methods are enabled; do not replace it merely because the tenant and application IDs must be replaced.
 
 ## Device gate
 

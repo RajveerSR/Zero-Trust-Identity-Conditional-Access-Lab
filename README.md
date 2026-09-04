@@ -60,7 +60,7 @@ Before any tenant work:
 3. Complete every prerequisite gate and record shared-tenant coordination in [docs/prerequisites.md](docs/prerequisites.md).
 4. Export current policy state and preview. Only then use the separately guarded report-only apply command in [docs/rollout-and-recovery.md](docs/rollout-and-recovery.md).
 
-Enabling a policy is deliberately a different script and requires the exact Graph policy ID plus a confirmation phrase. Report-only results are evaluation evidence; they are not proof that access was enforced.
+Enabling a policy is deliberately a different script and requires a tenant-bound policy identity record plus a confirmation phrase containing the policy key and exact Graph ID. Report-only results are evaluation evidence; they are not proof that access was enforced, and creating a report-only policy is still a tenant configuration change.
 
 ## Security decisions to defend
 

@@ -2,6 +2,11 @@
   "manifestVersion": 1,
   "tenantDisplayName": "Fabrikam Identity Lab (example)",
   "coordinationStatus": "EXAMPLE VALUES - verify in the target tenant",
+  "identifierNotes": {
+    "TENANT_ID": "Tenant-specific placeholder; replace it.",
+    "SENSITIVE_APP_ID": "Tenant-specific application (client) ID placeholder; replace it.",
+    "PHISHING_RESISTANT_AUTH_STRENGTH_ID": "Microsoft built-in constant, normally 00000000-0000-0000-0000-000000000004; verify availability and permitted methods rather than inventing a tenant-specific ID."
+  },
   "values": {
     "TENANT_ID": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
     "SENSITIVE_APP_ID": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",

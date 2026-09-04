@@ -37,5 +37,6 @@ Risk-based P2 policies, broad legacy-auth blocking, custom identity providers, d
 - Group membership is current and nested-group behaviour is understood before testing.
 - The sensitive resource ID is the resource/service principal users actually request, not merely an app registration object copied by name.
 - Authentication methods accepted by the built-in strength are enabled and registered before CA002 enforcement.
+- CA002's `All` resource scope includes Azure management, CLI, and PowerShell sign-in paths for pilot admins; test those paths before enforcement rather than treating the policy as portal-only.
 - Intune has evaluated the Windows test device recently and the chosen client presents its device identity. Other platforms are outside the v0.1 device pilot.
 - Existing tenant policies can interact with these policies; this repository never assumes an isolated tenant.

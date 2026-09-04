@@ -5,7 +5,7 @@ All definitions are checked in as `enabledForReportingButNotEnforced`. The expec
 | ID | Purpose | Include scope | Exclusions | Grant control | Prerequisites | Expected user impact |
 |---|---|---|---|---|---|---|
 | CA001 | Baseline account-takeover resistance | Shared lab-user and lab-admin groups; all resources; all clients | Emergency-access group; MFA exception group | Require MFA | Entra ID P1; registered MFA; tested recovery | In enforcement, prompt when no acceptable MFA claim exists |
-| CA002 | Stronger privileged authentication | Shared lab-admin group; all resources; all clients | Emergency-access group | Built-in phishing-resistant MFA strength | Entra ID P1; enabled and registered FIDO2/passkey, WHfB, or qualifying CBA; verified strength ID | In enforcement, weak MFA alone cannot satisfy the policy |
+| CA002 | Stronger privileged authentication | Shared lab-admin group; all resources (including Azure management, CLI, and PowerShell sign-ins); all clients | Emergency-access group | Built-in phishing-resistant MFA strength | Entra ID P1; enabled and registered FIDO2/passkey, WHfB, or qualifying CBA; verified strength ID | In enforcement, weak MFA alone cannot satisfy the policy |
 | CA003 | Device assurance for sensitive data | Shared lab-user and lab-admin groups; sensitive resource only; Windows; all clients | Emergency-access group; device exception group | Require compliant device | Entra ID P1, Intune licensing, assigned compliance policy, registered/enrolled/recently evaluated Windows device, supported client | In enforcement, unknown/noncompliant devices fail access to the sensitive app |
 
 ## Interaction cases

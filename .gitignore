@@ -1,5 +1,6 @@
 config/lab-identities.json
 config/tenant.json
+config/policy-identities.json
 evidence/tenant/**
 !evidence/tenant/.gitkeep
 *.pyc
