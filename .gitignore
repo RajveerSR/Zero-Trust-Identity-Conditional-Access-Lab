@@ -9,3 +9,7 @@ __pycache__/
 .venv/
 bin/
 obj/
+
+*.private.json
+
+*.private.png
