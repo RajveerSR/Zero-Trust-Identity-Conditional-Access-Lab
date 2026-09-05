@@ -101,6 +101,22 @@ class PolicyTests(unittest.TestCase):
         }
         self.assertEqual({"CA001": "UPDATE", "CA002": "UNCHANGED", "CA003": "CREATE"}, actions)
 
+    def test_graph_context_annotations_do_not_trigger_policy_update(self) -> None:
+        for _, document in self.resolved[:2]:
+            desired = graph_payload(document)
+            observed = copy.deepcopy(desired)
+            observed["@odata.context"] = "https://graph.microsoft.com/v1.0/$metadata#policies"
+            observed["grantControls"]["authenticationStrength@odata.context"] = "https://graph.microsoft.com/v1.0/$metadata#strength"
+            strength = observed["grantControls"].get("authenticationStrength")
+            if strength:
+                strength["combinationConfigurations"] = []
+                strength["combinationConfigurations@odata.context"] = "https://graph.microsoft.com/v1.0/$metadata#combinations"
+            current = {desired["displayName"]: observed}
+            self.assertEqual("UNCHANGED", classify_change(desired, current))
+            observed["sessionControls"] = {"signInFrequency": {"value": 1, "type": "hours"}}
+            self.assertEqual("UPDATE", classify_change(desired, current))
+            self.assertIn("sessionControls", extra_paths(normalize_graph_policy(observed), normalize_graph_policy(desired)))
+
     def test_enabled_definition_is_rejected(self) -> None:
         changed = copy.deepcopy(self.resolved[0][1])
         changed["graph"]["state"] = "enabled"

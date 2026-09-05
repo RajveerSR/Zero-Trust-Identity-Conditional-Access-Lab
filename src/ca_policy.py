@@ -271,7 +271,13 @@ def normalize_graph_policy(policy: dict[str, Any]) -> dict[str, Any]:
 
     def prune_empty(value: Any) -> Any:
         if isinstance(value, dict):
-            result = {key: prune_empty(item) for key, item in value.items()}
+            # Graph adds context URLs even for null relationships. These describe
+            # response metadata; they are not writable Conditional Access settings.
+            result = {
+                key: prune_empty(item)
+                for key, item in value.items()
+                if not key.endswith("@odata.context")
+            }
             return {key: item for key, item in result.items() if item not in (None, [], {})}
         if isinstance(value, list):
             result = [prune_empty(item) for item in value]
