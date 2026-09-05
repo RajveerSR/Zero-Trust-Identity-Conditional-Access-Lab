@@ -76,8 +76,13 @@ def assert_graph_tenant(expected_tenant_id: str) -> str:
     return actual
 
 
-def graph_request(method: str, url: str, body: dict[str, Any] | None = None) -> Any:
+def graph_request(method: str, url: str, body: dict[str, Any] | None = None, *, headers: dict[str, str] | None = None) -> Any:
     command = ["rest", "--only-show-errors", "--method", method, "--url", url, "--output", "json"]
+    request_headers = dict(headers or {})
+    if body is not None:
+        request_headers.setdefault("Content-Type", "application/json")
+    if request_headers:
+        command.extend(["--headers", *(f"{name}={value}" for name, value in request_headers.items())])
     if body is None:
         completed = _run_az(command)
     else:
@@ -87,7 +92,7 @@ def graph_request(method: str, url: str, body: dict[str, Any] | None = None) -> 
             payload_path = Path(temp_dir) / "payload.json"
             payload_path.write_text(json.dumps(body, separators=(",", ":")), encoding="utf-8")
             command.extend(
-                ["--headers", "Content-Type=application/json", "--body", f"@{payload_path}"]
+                ["--body", f"@{payload_path}"]
             )
             completed = _run_az(command)
     if completed.returncode != 0:
@@ -96,11 +101,11 @@ def graph_request(method: str, url: str, body: dict[str, Any] | None = None) -> 
     return _decode_json_response(completed, f"Graph {method.upper()}")
 
 
-def graph_get_all(url: str) -> list[dict[str, Any]]:
+def graph_get_all(url: str, *, headers: dict[str, str] | None = None) -> list[dict[str, Any]]:
     items: list[dict[str, Any]] = []
     next_url: str | None = url
     while next_url:
-        response = graph_request("GET", next_url)
+        response = graph_request("GET", next_url, headers=headers) if headers else graph_request("GET", next_url)
         if not isinstance(response, dict) or not isinstance(response.get("value"), list):
             raise GraphCliError("Graph collection response did not contain a value array")
         items.extend(response["value"])

@@ -106,11 +106,15 @@ def main(argv: list[str] | None = None) -> int:
         assert_graph_tenant(tenant_id)
         personas = {config[key]: label for key, label in PERSONA_KEYS.items() if key in config}
         query = urlencode({"$filter": f"createdDateTime ge {since} and createdDateTime le {until}"})
-        events = graph_get_all(f"{GRAPH_ROOT}/auditLogs/signIns?{query}")
+        # Required by Graph v1.0 to return reportOnlySuccess/Failure/etc.
+        events = graph_get_all(f"{GRAPH_ROOT}/auditLogs/signIns?{query}", headers={"Prefer": "include-unknown-enum-members"})
     except (ValueError, GraphCliError) as error:
         print(error, file=sys.stderr)
         return 1
 
+    missing_ca_details = sum("appliedConditionalAccessPolicies" not in event for event in events)
+    if missing_ca_details:
+        print(f"WARNING: {missing_ca_details} sign-in record(s) omit Conditional Access details; check permissions before interpreting an empty result.")
     relevant = []
     for event in events:
         reduced = _minimal_event(event, personas, args.policy_prefix)
@@ -125,6 +129,9 @@ def main(argv: list[str] | None = None) -> int:
             "source": "Microsoft Graph v1.0 /auditLogs/signIns",
             "tenantId": tenant_id,
             "policyPrefix": args.policy_prefix,
+            "requestPreference": "include-unknown-enum-members",
+            "queriedSignInCount": len(events),
+            "recordsMissingConditionalAccessDetails": missing_ca_details,
             "dataMinimisation": "UPN, user display name, IP address, and location omitted; shared user IDs mapped to personas; authentication steps limited to method/result fields",
             "interpretation": "Report-only results predict outcomes; only enabled-policy results plus an actual sign-in outcome demonstrate enforcement",
         },
