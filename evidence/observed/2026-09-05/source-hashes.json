@@ -1,0 +1,26 @@
+[
+  {
+    "sourceFilename": "verified.private.json",
+    "sha256": "e380eba42a36eaf21b28425c9e2cc19cc4b55690edb7df6568e402455015ba51"
+  },
+  {
+    "sourceFilename": "report-only-success-20260905.private.png",
+    "sha256": "ee70a73a2ea151ceb1b0af576b3d108562ea9e9800886baafc47e4da0d43c63a"
+  },
+  {
+    "sourceFilename": "authentication-previously-satisfied-20260905.private.png",
+    "sha256": "e69504fdd637a4e5db20f050fbe89c50222adf617786810d0e6a1b2a64a005ef"
+  },
+  {
+    "sourceFilename": "what-if-admin-result.private.json",
+    "sha256": "1d76c7cb946c62e978913da64f9c4618555d93e8aea62b9326088d24de2dcffb"
+  },
+  {
+    "sourceFilename": "what-if-standard-result.private.json",
+    "sha256": "3ce2f71cf7c8008c990802e9cde158631d2ce9f49cbb8598447db1ef1b2be9da"
+  },
+  {
+    "sourceFilename": "what-if-disabled-leaver-result.private.json",
+    "sha256": "824e672fac5db1fa50e8e80c0b99034585a4052908f84db0c6afd68edbca6220"
+  }
+]

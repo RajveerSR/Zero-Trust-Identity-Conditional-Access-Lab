@@ -2,36 +2,36 @@
 
 ## Local and design
 
-- [x] Threats, identities, resources, boundaries, and residual risks documented — `docs/threat-model.md`.
-- [x] Three minimal policy definitions include purpose, scope, exclusions, controls, prerequisites, impact, and status — `policies/*.json`.
-- [x] Policy interaction and expected outcomes documented — `docs/policy-matrix.md`.
-- [x] Local validation and deterministic tests implemented — `scripts/validate_policies.py`, `tests/test_ca_policy.py`.
-- [x] Readable create/update/no-change preview implemented — `scripts/preview_changes.py`.
-- [x] Report-only deployment guarded from example config and enabled state — `scripts/deploy_report_only.py`.
+- [x] Threats, identities, resources, boundaries, and residual risks documented â€” `docs/threat-model.md`.
+- [x] Three minimal policy definitions include purpose, scope, exclusions, controls, prerequisites, impact, and status â€” `policies/*.json`.
+- [x] Policy interaction and expected outcomes documented â€” `docs/policy-matrix.md`.
+- [x] Local validation and deterministic tests implemented â€” `scripts/validate_policies.py`, `tests/test_ca_policy.py`.
+- [x] Readable create/update/no-change preview implemented â€” `scripts/preview_changes.py`.
+- [x] Report-only deployment guarded from example config and enabled state â€” `scripts/deploy_report_only.py`.
 - [x] Report-only deployment guard branches, exact endpoints/payloads, partial failure, and no-write refusals have offline regression coverage.
-- [x] Enforcement is a separate single-policy action bound to exact tenant/key/ID/name ownership — `scripts/enable_policy.py`.
-- [x] Recovery uses the same exact ownership binding and remains independently invocable — `scripts/disable_policy.py`.
+- [x] Enforcement is a separate single-policy action bound to exact tenant/key/ID/name ownership â€” `scripts/enable_policy.py`.
+- [x] Recovery uses the same exact ownership binding and remains independently invocable â€” `scripts/disable_policy.py`.
 - [x] Windows `az.cmd` resolution, process errors, safe payload transport, malformed JSON, and pagination have offline tests.
 - [x] Realistic server-added authentication-strength metadata and writable drift are tested separately.
-- [x] Emergency exclusion, monitoring, drill, and recovery model documented — `docs/recovery-runbook.md`.
-- [x] Shared identities consumed via an explicit non-secret manifest — `config/lab-identities.example.json`.
-- [x] Managed-identity least-privilege scenario and positive/negative probe prepared — `infra/`, `docs/workload-identity.md`.
+- [x] Emergency exclusion, monitoring, drill, and recovery model documented â€” `docs/recovery-runbook.md`.
+- [x] Shared identities consumed via an explicit non-secret manifest â€” `config/lab-identities.example.json`.
+- [x] Managed-identity least-privilege scenario and positive/negative probe prepared â€” `infra/`, `docs/workload-identity.md`.
 - [x] Negative workload diagnostics reject network, authentication, missing-resource, and unknown failures locally.
-- [x] Local evidence is explicitly labelled synthetic — `evidence/examples/`.
-- [x] Actual local regression evidence recorded separately from tenant evidence — `evidence/local/verification-2026-09-04.md`.
+- [x] Local evidence is explicitly labelled synthetic â€” `evidence/examples/`.
+- [x] Actual local regression evidence recorded separately from tenant evidence â€” `evidence/local/verification-2026-09-04.md`.
 
 ## Tenant-dependent Conditional Access
 
-- [ ] E10 shared change record approved; IDs reconciled with Enterprise Identity Governance Lab.
-- [ ] E03 prechange Conditional Access export captured and reviewed.
-- [ ] Report-only deployment completed with Graph response IDs recorded.
-- [ ] E03 postdeployment export proves all definitions remain report-only.
-- [ ] Tenant-bound `config/policy-identities.json` built from the reviewed postdeployment export.
-- [ ] E04 What If evidence captured for every available T01–T12 case.
-- [ ] E05 report-only sign-ins captured and reconciled to expectations.
-- [ ] Emergency-access monitoring alert and both-account drill evidenced (E08).
-- [ ] Approval recorded for each separate enable action.
-- [ ] E06 actual enforced allow and deny/challenge outcomes captured per enabled policy.
+- [x] Shared user/group identifiers reconciled with the governance lab; recovery accounts still deferred.
+- [x] Prechange export reviewed; two selected report-only policies created and exact IDs recorded.
+- [x] CA001/CA002 postdeployment state, scopes and grant controls verified; identity record built for those two only.
+- [x] Three live What If cases captured: administrator, ordinary user, disabled leaver.
+- [x] Portal report-only successes captured for CA001/CA002; see limitations in the observed evidence pack.
+- [ ] Resolve the CLI/portal evidence discrepancy and correlate the exact sign-in ID.
+- [ ] Capture remaining applicable What If/sign-in matrix cases; three cases do not complete the full matrix.
+- [ ] Establish and test recovery and monitoring before enforcement.
+- [ ] Review any Security Defaults transition and replacement protection.
+- [ ] Separately enable and test actual allow/block/challenge outcomes.
 
 ## Device-dependent
 
@@ -50,7 +50,7 @@
 
 ## Interview-ready handoff
 
-- [ ] Redacted evidence pack ties each claim to an evidence ID and test case.
-- [ ] Known limitations and unrun cases remain visible.
-- [ ] Demonstration rehearsed: threat → policy choice → preview → evaluation → troubleshooting → recovery.
+- [x] Curated observed evidence pack ties completed claims to source artifacts; correlation gaps remain explicit.
+- [x] Known limitations and unrun cases remain visible.
+- [ ] Demonstration rehearsed: threat â†’ policy choice â†’ preview â†’ evaluation â†’ troubleshooting â†’ recovery.
 - [ ] `REVIEW.md` questions resolved or explicitly accepted.

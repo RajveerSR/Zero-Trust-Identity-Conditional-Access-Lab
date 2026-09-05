@@ -4,17 +4,27 @@ A small, version-controlled Microsoft Entra lab for designing, previewing, testi
 
 ## Current status
 
-Version 0.1 is scaffolded for local use. Three policy definitions, validation, a readable change preview, guarded report-only deployment, tenant export/evidence collection, and a bounded managed-identity workload probe are implemented.
+CA001 and CA002 are deployed and verified in **report-only mode**. The Entra portal shows **Report-only: Success** for both, and three live What If evaluations confirm the intended user scopes. The offline Python suite passes 67 tests.
 
-**No tenant or Azure resource changes have been made from this repository.** The checked-in evidence is explicitly synthetic. The compliant-device scenario and workload probe are **designed but unverified** until the prerequisites in [docs/prerequisites.md](docs/prerequisites.md) are met.
+The [observed evidence pack](evidence/observed/2026-09-05/README.md) contains the supplied portal screenshots, redacted Graph readback and simulation results. **Enforcement, device compliance, recovery drills and the Azure workload are still unverified.**
 
 | Capability | State | Verification boundary |
 |---|---|---|
-| Baseline MFA for shared lab users/admins | Designed | Local validation only |
-| Phishing-resistant authentication for lab admins | Designed | Local validation only |
-| Compliant Windows device for the sensitive app | Designed, unverified | Requires Intune enrollment/compliance signal |
-| Report-only Graph deployment | Prepared, never run | Requires tenant role, scopes, and explicit apply flag |
-| Managed identity to one Blob container | Designed, unverified | Requires an Azure host and chargeable Storage resources |
+| Baseline MFA for shared lab users/admins | Deployed report-only | Exact readback, portal report-only success and What If |
+| Phishing-resistant authentication for lab admins | Deployed report-only | Same; fresh method-specific passkey event not captured |
+| Compliant Windows device for the sensitive app | Prepared, not deployed | Verified Azure Resource Manager target; Intune/device evidence pending |
+| Report-only Graph deployment | Live verified for CA001/CA002 | No enforcement enabled |
+| Managed identity to one Blob container | Designed, unverified | No Azure resources deployed; host and spending decision pending |
+
+![Two policies evaluated successfully in Entra report-only mode](evidence/observed/2026-09-05/report-only-success.png)
+
+## Interview walkthrough
+
+1. Explain the shared identity boundary and why privileged users need a stronger authentication requirement.
+2. Show the source policies and guarded preview/apply separation.
+3. Open the evidence pack: configuration readback, the three applicability simulations and the report-only screenshot.
+4. Explain the troubleshooting finding: the portal exposes results missing from the CLI export; retain the real observation without inventing a machine-readable result.
+5. State what is still untested, and show the recovery/enforcement and device test gates.
 
 ## Design
 
@@ -67,7 +77,7 @@ Enabling a policy is deliberately a different script and requires a tenant-bound
 - **Explicit pilot groups, not `All users`:** confines blast radius and makes the shared identity boundary visible. A production design should separately evaluate broad coverage gaps.
 - **Two authentication levels:** baseline MFA reduces common account takeover; phishing-resistant MFA protects privileged activity from adversary-in-the-middle phishing and MFA fatigue.
 - **One control per reason:** the Windows device control is a separate policy, so What If and sign-in logs show why a sign-in would be challenged or blocked. Other platforms are deferred to avoid known report-only certificate prompts without platform-specific testing.
-- **Emergency access excluded, monitored, and tested:** exclusion avoids repair-path lockout; strong credentials, alerting, and quarterly drills compensate for the bypass.
+- **Emergency-access design:** the source excludes a recovery group; the live group is currently empty because account setup was deferred. Monitoring and recovery drills are not yet demonstrated.
 - **Human and workload identities are separate:** user MFA policies do not protect service principals. The workload demo uses Azure RBAC and a managed identity with container-scoped read access.
 - **Fail-safe rollout:** definitions can only deploy in `enabledForReportingButNotEnforced`; enforcement requires a separate reviewed action after successful tenant tests.
 

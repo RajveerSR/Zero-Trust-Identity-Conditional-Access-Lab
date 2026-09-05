@@ -1,0 +1,74 @@
+{
+  "classification": "Real Microsoft Graph What If responses to hypothetical inputs; not actual sign-ins or observed device state",
+  "scenarios": [
+    {
+      "persona": "administrator",
+      "capturedAtUtc": "2026-09-05T19:16:13.033605+00:00",
+      "resource": "Azure Resource Manager",
+      "assumedConditions": {
+        "devicePlatform": "windows",
+        "clientAppType": "browser"
+      },
+      "results": [
+        {
+          "displayName": "ZT-LAB-CA001-Require-MFA-Pilot",
+          "state": "enabledForReportingButNotEnforced",
+          "policyApplies": true,
+          "analysisReasons": "notSet"
+        },
+        {
+          "displayName": "ZT-LAB-CA002-Require-Phishing-Resistant-MFA-Admins",
+          "state": "enabledForReportingButNotEnforced",
+          "policyApplies": true,
+          "analysisReasons": "notSet"
+        }
+      ]
+    },
+    {
+      "persona": "Liam (ordinary lab user)",
+      "capturedAtUtc": "2026-09-05T19:18:11.690833+00:00",
+      "resource": "Azure Resource Manager",
+      "assumedConditions": {
+        "devicePlatform": "windows",
+        "clientAppType": "browser"
+      },
+      "results": [
+        {
+          "displayName": "ZT-LAB-CA001-Require-MFA-Pilot",
+          "state": "enabledForReportingButNotEnforced",
+          "policyApplies": true,
+          "analysisReasons": "notSet"
+        },
+        {
+          "displayName": "ZT-LAB-CA002-Require-Phishing-Resistant-MFA-Admins",
+          "state": "enabledForReportingButNotEnforced",
+          "policyApplies": false,
+          "analysisReasons": "users"
+        }
+      ]
+    },
+    {
+      "persona": "Sofia (disabled leaver; simulation only)",
+      "capturedAtUtc": "2026-09-05T19:18:13.351347+00:00",
+      "resource": "Azure Resource Manager",
+      "assumedConditions": {
+        "devicePlatform": "windows",
+        "clientAppType": "browser"
+      },
+      "results": [
+        {
+          "displayName": "ZT-LAB-CA001-Require-MFA-Pilot",
+          "state": "enabledForReportingButNotEnforced",
+          "policyApplies": false,
+          "analysisReasons": "users"
+        },
+        {
+          "displayName": "ZT-LAB-CA002-Require-Phishing-Resistant-MFA-Admins",
+          "state": "enabledForReportingButNotEnforced",
+          "policyApplies": false,
+          "analysisReasons": "users"
+        }
+      ]
+    }
+  ]
+}

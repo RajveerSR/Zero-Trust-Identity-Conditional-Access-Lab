@@ -61,13 +61,15 @@ python scripts/build_policy_identity_record.py `
   --output config/policy-identities.json
 ```
 
-The builder requires one exact exported match for each repository policy. Keep Graph IDs in this scoped record and the change/evidence record, not in deployable policy templates.
+For a staged CA001/CA002 deployment, pass `--policy-id CA001 --policy-id CA002` to validation, preview, deployment and the identity-record builder. The builder requires one exact exported match for each selected policy; undeployed CA003 must not be recorded as deployed. Keep Graph IDs in the ignored scoped record, not in deployable templates.
 
 ## 4. What If evaluation
 
 In Entra admin center, go to **Entra ID > Conditional Access > Policies > What If**. Test each row in [../tests/tenant-test-matrix.md](../tests/tenant-test-matrix.md), supplying identity, target resource, device platform, and client app. Save a screenshot or structured note containing UTC time, inputs, applicable/non-applicable policies, and grant controls.
 
 What If predicts policy applicability; it does not perform authentication, validate a live device-compliance claim, model every service dependency, or prove enforcement.
+
+For repeatable collection, `scripts/evaluate_what_if.py --expected-tenant-id <tenant-id> --input <private-request.json> --output <new-private-output.json>` invokes the documented Graph simulation action. Include explicit user and resource application IDs, Windows/browser conditions and `appliedPoliciesOnly: false`. See the [observed results](../evidence/observed/2026-09-05/what-if.redacted.json). The caller needs `Policy.Read.ConditionalAccess` or a documented higher read permission. This does not change policy state.
 
 ## 5. Report-only observation
 

@@ -1,0 +1,40 @@
+{
+  "classification": "Redacted real Graph configuration readback; no enforcement claim",
+  "capturedAtUtc": "2026-09-05T18:58:02.466290+00:00",
+  "policies": [
+    {
+      "displayName": "ZT-LAB-CA001-Require-MFA-Pilot",
+      "state": "enabledForReportingButNotEnforced",
+      "includeGroups": [
+        "shared employees",
+        "lab administrators"
+      ],
+      "excludeGroups": [
+        "emergency exclusion (empty)",
+        "MFA exceptions (empty)"
+      ],
+      "includeApplications": [
+        "All"
+      ],
+      "builtInControls": [
+        "mfa"
+      ],
+      "authenticationStrength": null
+    },
+    {
+      "displayName": "ZT-LAB-CA002-Require-Phishing-Resistant-MFA-Admins",
+      "state": "enabledForReportingButNotEnforced",
+      "includeGroups": [
+        "lab administrators"
+      ],
+      "excludeGroups": [
+        "emergency exclusion (empty)"
+      ],
+      "includeApplications": [
+        "All"
+      ],
+      "builtInControls": [],
+      "authenticationStrength": "Phishing-resistant MFA"
+    }
+  ]
+}
