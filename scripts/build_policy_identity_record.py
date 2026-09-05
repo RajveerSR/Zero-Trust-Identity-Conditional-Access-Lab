@@ -20,6 +20,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--policy-export", type=Path, required=True)
     parser.add_argument("--policy-dir", type=Path, default=ROOT / "policies")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--policy-id", action="append", choices=("CA001", "CA002", "CA003"), help="Bind only explicitly selected deployed policies; repeat for more than one")
     args = parser.parse_args(argv)
     try:
         if args.output.exists():
@@ -40,8 +41,16 @@ def main(argv: list[str] | None = None) -> int:
             if isinstance(item, dict) and isinstance(item.get("displayName"), str):
                 by_name.setdefault(item["displayName"], []).append(item)
 
+        names = source_policy_names(args.policy_dir)
+        if args.policy_id:
+            if len(args.policy_id) != len(set(args.policy_id)):
+                raise PolicyIdentityError("Policy IDs may be selected only once")
+            missing = set(args.policy_id) - names.keys()
+            if missing:
+                raise PolicyIdentityError(f"Selected policy IDs absent from source: {sorted(missing)}")
+            names = {key: names[key] for key in args.policy_id}
         policies = {}
-        for key, expected_name in sorted(source_policy_names(args.policy_dir).items()):
+        for key, expected_name in sorted(names.items()):
             matches = by_name.get(expected_name, [])
             if len(matches) != 1:
                 raise PolicyIdentityError(

@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from src.ca_policy import load_config, load_policy_documents, resolve_policy, select_policy_documents, validate_collection
+from src.ca_policy import load_config, load_policy_documents, resolve_policy, select_policy_documents, validate_collection, PolicyIssue
 
 
 def parse_args() -> argparse.Namespace:
@@ -40,7 +40,7 @@ def main() -> int:
             resolved, missing = resolve_policy(document, config)
             if missing:
                 for key in sorted(missing):
-                    print(f"ERROR: {path}: unresolved configuration key {key}")
+                    issues.append(PolicyIssue("ERROR", str(path), f"unresolved configuration key {key}"))
             resolved_documents.append((path, resolved))
         issues.extend(validate_collection(resolved_documents, config.get("EMERGENCY_ACCESS_GROUP_ID"), expected_ids))
 
