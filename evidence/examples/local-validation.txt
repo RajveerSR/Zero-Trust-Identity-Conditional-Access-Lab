@@ -1,4 +1,4 @@
-SYNTHETIC LOCAL EXAMPLE — NOT TENANT EVIDENCE
+SYNTHETIC LOCAL EXAMPLE - NOT TENANT EVIDENCE
 
 WARNING: config\lab-identities.example.json contains example identifiers; never use it for tenant deployment
 WARNING: config\tenant.example.json contains example identifiers; never use it for tenant deployment

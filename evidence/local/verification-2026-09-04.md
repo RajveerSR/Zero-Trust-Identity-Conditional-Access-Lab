@@ -1,4 +1,4 @@
-# Local verification — 4 September 2026
+# Local verification - 4 September 2026
 
 This is local engineering evidence, not Microsoft Entra, Intune, sign-in, or Azure deployment evidence.
 

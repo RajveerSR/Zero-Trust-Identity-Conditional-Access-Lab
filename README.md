@@ -43,15 +43,15 @@ Policy interaction is intentional: a lab administrator accessing the sensitive a
 
 ## Repository map
 
-- `policies/` — deployable Microsoft Graph policy bodies wrapped with review metadata.
-- `config/` — non-secret example identifiers and deployment settings. The identity manifest points back to the Enterprise Identity Governance Lab as system of record.
-- `src/` — dependency-free policy loading, substitution, comparison, and validation.
-- `scripts/` — local preview, guarded Graph deployment/export, evidence collection, and workload probe.
-- `tests/` — Python unit tests, fixtures, and the tenant test matrix.
-- `docs/` — threat model, policy rationale, prerequisites, rollout, troubleshooting, and recovery.
-- `evidence/` — evidence index, completion checklist, and synthetic examples.
-- `learning/` — SC-300 mapping and original practice scenarios.
-- `infra/` — optional Bicep for the narrowly scoped workload-identity resources.
+- `policies/` - deployable Microsoft Graph policy bodies wrapped with review metadata.
+- `config/` - non-secret example identifiers and deployment settings. The identity manifest points back to the Enterprise Identity Governance Lab as system of record.
+- `src/` - dependency-free policy loading, substitution, comparison, and validation.
+- `scripts/` - local preview, guarded Graph deployment/export, evidence collection, and workload probe.
+- `tests/` - Python unit tests, fixtures, and the tenant test matrix.
+- `docs/` - threat model, policy rationale, prerequisites, rollout, troubleshooting, and recovery.
+- `evidence/` - evidence index, completion checklist, and synthetic examples.
+- `learning/` - SC-300 mapping and original practice scenarios.
+- `infra/` - optional Bicep for the narrowly scoped workload-identity resources.
 
 ## Quick start
 

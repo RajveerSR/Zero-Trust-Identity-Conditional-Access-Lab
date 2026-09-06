@@ -1,6 +1,6 @@
 # Independent review handoff
 
-## Current state — 5 September 2026
+## Current state - 5 September 2026
 
 - CA001 and CA002 were created through the repository deployer in report-only mode. Exact IDs, names, scopes, grants and state were checked against source; preview reports both UNCHANGED.
 - Two supplied Entra screenshots show report-only success and a Previously satisfied authentication step. The original authentication method is not independently captured.

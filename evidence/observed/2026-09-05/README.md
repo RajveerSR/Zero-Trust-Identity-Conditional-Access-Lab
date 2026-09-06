@@ -1,4 +1,4 @@
-# Observed Conditional Access evidence — 5 September 2026
+# Observed Conditional Access evidence - 5 September 2026
 
 Two policies were deployed in report-only mode and read back from Microsoft Graph. The supplied Entra portal screenshot shows **Report-only: Success** for both CA001 and CA002. Neither policy has been enabled for enforcement.
 

@@ -1,4 +1,4 @@
-# Local and live verification — 5 September 2026
+# Local and live verification - 5 September 2026
 
 | Check | Result |
 |---|---|

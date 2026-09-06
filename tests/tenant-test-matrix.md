@@ -31,4 +31,4 @@ Use controlled test accounts and record UTC time, policy version/commit, Graph p
 | T13 | Managed identity | `allowed` Blob container | Azure-host token | N/A | N/A | Blob list succeeds via Azure RBAC | Workload probe JSON + role assignment |
 | T14 | Managed identity | `denied` Blob container | Same token/host/time window | N/A | N/A | Authorization denial | Workload probe JSON; confirm it is not network failure |
 
-If device prerequisites are unavailable, mark T02–T05, T08–T09 **not run — designed but unverified**. Do not convert an assumed device state into observed evidence.
+If device prerequisites are unavailable, mark T02–T05, T08–T09 **not run - designed but unverified**. Do not convert an assumed device state into observed evidence.
